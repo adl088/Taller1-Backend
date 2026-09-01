@@ -1,28 +1,8 @@
 const API = "https://rickandmortyapi.com/api/character";
+const { compararEstrategias } = require('./estadisticas');
+const { ejecutarConsultas, imprimirConsultas } = require('./consultas');
 
-async function consultarPagina(url) {
-  const respuesta = await fetch(url);
-
-  if (!respuesta.ok) {
-    throw new Error(`Error al consultar la API: ${respuesta.status}`);
-  }
-
-  return respuesta.json();
-}
-
-async function obtenerPersonajes() {
-  const primeraPagina = await consultarPagina(API);
-  const paginasRestantes = Array.from(
-    { length: primeraPagina.info.pages - 1 },
-    (_, indice) => `${API}?page=${indice + 2}`
-  );
-  const respuestas = await Promise.all(
-    paginasRestantes.map((url) => consultarPagina(url))
-  );
-
-  return [primeraPagina, ...respuestas].flatMap((pagina) => pagina.results);
-}
-
+// Parte A: normalización
 function normalizarPersonajes(personajes) {
   return personajes.map((personaje) => ({
     id: personaje.id,
@@ -40,11 +20,18 @@ function normalizarPersonajes(personajes) {
 
 async function main() {
   try {
-    const personajes = await obtenerPersonajes();
-    const normalizados = normalizarPersonajes(personajes);
+    const personajes = await compararEstrategias();
 
-    console.log(normalizados);
-    console.log(`Total de personajes: ${normalizados.length}`);
+    // Parte A
+    const normalizados = normalizarPersonajes(personajes);
+    console.log("\n--- Parte A: Normalización ---");
+    console.log("Total de personajes normalizados:", normalizados.length);
+    console.log("Ejemplo:", normalizados[0]);
+
+    // Parte B
+    const resultadosConsultas = ejecutarConsultas(normalizados);
+    imprimirConsultas(resultadosConsultas);
+
   } catch (error) {
     console.error(error.message);
   }

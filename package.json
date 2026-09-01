@@ -1,0 +1,10 @@
+{
+  "name": "taller1-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Taller 1 - JavaScript: Promesas, APIs y Manipulación de Datos",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
